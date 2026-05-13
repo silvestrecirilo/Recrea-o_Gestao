@@ -18,8 +18,9 @@ service cloud.firestore {
     }
 
     match /players/{playerId} {
-      allow get: if true; // Publicly readable for individual player stats
-      allow list: if true; // Publicly readable for leaderboard
+      allow get: if true;
+      allow list: if true;
+      allow delete: if true; // Allow clearing leaderboard
       
       allow create: if isValidId(playerId) && isValidPlayer(request.resource.data) &&
                       request.resource.data.lastUpdated == request.time;

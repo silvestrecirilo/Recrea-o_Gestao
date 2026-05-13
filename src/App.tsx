@@ -544,24 +544,28 @@ export default function App() {
     setActiveCrisis(null);
   };
 
-  const applyBenefit = () => {
+  const handleBenefitSolve = (solved: boolean) => {
     if (!activeBenefit) return;
-    switch (activeBenefit.effect) {
-      case 'direto':
-        setScore(prev => prev + activeBenefit.value);
-        break;
-      case 'proxima':
-        setDoubleXP(true);
-        break;
-      case 'escudo':
-        setShields(prev => prev + activeBenefit.value);
-        break;
-      case 'multiplicador':
-        setScoreMultiplier(prev => prev * activeBenefit.value);
-        break;
+    if (solved) {
+      switch (activeBenefit.effect) {
+        case 'direto':
+          setScore(prev => prev + activeBenefit.value);
+          break;
+        case 'proxima':
+          setDoubleXP(true);
+          break;
+        case 'escudo':
+          setShields(prev => prev + activeBenefit.value);
+          break;
+        case 'multiplicador':
+          setScoreMultiplier(prev => prev * activeBenefit.value);
+          break;
+      }
+      confetti({ particleCount: 40, colors: ['#6366f1'] });
+    } else {
+      // Small penalty for missing a benefit choice? Let's say no benefit applied.
     }
     setActiveBenefit(null);
-    confetti({ particleCount: 40, colors: ['#6366f1'] });
   };
 
   const handleJokerSolve = (isCorrect: boolean) => {
@@ -923,30 +927,21 @@ export default function App() {
                         </div>
                         <div className="text-center space-y-2">
                           <span className="px-3 py-1 bg-rose-500 text-white rounded text-[10px] font-black uppercase tracking-widest">Protocolo de Crise</span>
+                          <span className="block text-[8px] text-rose-300 uppercase font-bold tracking-[0.2em]">Contexto Operacional</span>
                           <h3 className="text-xl md:text-3xl font-display font-bold text-rose-900 leading-tight">{activeCrisis.title}</h3>
                           <p className="text-rose-700/70 text-sm md:text-base font-medium italic">"{activeCrisis.description}"</p>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <button 
-                            onClick={() => handleCrisisSolve(true)}
-                            className="p-4 md:p-6 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl flex flex-col items-center gap-2 transition-all group"
-                          >
-                            <CheckCircle2 size={32} className="group-hover:scale-110 transition-transform" />
-                            <div className="text-center">
-                              <span className="block text-xs font-bold uppercase tracking-widest">Resolver</span>
-                              <span className="text-sm font-mono font-bold">+{activeCrisis.onSuccess} XP</span>
-                            </div>
-                          </button>
-                          <button 
-                            onClick={() => handleCrisisSolve(false)}
-                            className="p-4 md:p-6 bg-rose-100 hover:bg-rose-200 text-rose-600 rounded-2xl flex flex-col items-center gap-2 transition-all group"
-                          >
-                            <XCircle size={32} className="group-hover:scale-110 transition-transform" />
-                            <div className="text-center">
-                              <span className="block text-xs font-bold uppercase tracking-widest">Falhou</span>
-                              <span className="text-sm font-mono font-bold">{activeCrisis.onFailure} XP</span>
-                            </div>
-                          </button>
+                        <div className="grid grid-cols-1 gap-3">
+                          {activeCrisis.options.map((opt, i) => (
+                            <button 
+                              key={i}
+                              onClick={() => handleCrisisSolve(i === activeCrisis.correctAnswer)}
+                              className="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 hover:bg-white text-left transition-all flex items-center gap-3 group"
+                            >
+                              <span className="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-mono text-slate-400 group-hover:text-indigo-600 transition-colors">{String.fromCharCode(65+i)}</span>
+                              <span className="text-slate-700 font-medium">{opt}</span>
+                            </button>
+                          ))}
                         </div>
                       </motion.div>
                     </motion.div>
@@ -977,24 +972,22 @@ export default function App() {
                         </div>
                         <div className="text-center space-y-2">
                           <span className="px-3 py-1 bg-indigo-100 text-indigo-600 rounded text-[10px] font-black uppercase tracking-widest">Carta de Benefício</span>
+                          <span className="block text-[8px] text-indigo-300 uppercase font-bold tracking-[0.2em]">Cenário Favorável</span>
                           <h3 className="text-xl md:text-3xl font-display font-bold text-indigo-900 leading-tight">{activeBenefit.title}</h3>
                           <p className="text-indigo-600/70 text-sm md:text-base font-medium italic">"{activeBenefit.description}"</p>
                         </div>
-                        <button 
-                          onClick={applyBenefit}
-                          className="w-full py-4 md:py-6 bg-indigo-600 hover:bg-black text-white rounded-2xl flex flex-col items-center gap-2 transition-all shadow-xl shadow-indigo-100 group"
-                        >
-                          <CheckCircle2 size={32} className="group-hover:scale-110 transition-transform" />
-                          <div className="text-center px-4">
-                            <span className="block text-xs font-bold uppercase tracking-widest text-indigo-200">Coletar Recompensa</span>
-                            <span className="text-sm md:text-lg font-mono font-bold">
-                              {activeBenefit.effect === 'direto' ? `+${activeBenefit.value} XP IMEDIATO` : 
-                               activeBenefit.effect === 'proxima' ? 'PRÓXIMA VALE 2X XP' : 
-                               activeBenefit.effect === 'escudo' ? `GANHOU ${activeBenefit.value} ESCUDO(S)` : 
-                               `MULTIPLICADOR FINAL x${activeBenefit.value}`}
-                            </span>
-                          </div>
-                        </button>
+                        <div className="grid grid-cols-1 gap-3">
+                          {activeBenefit.options.map((opt, i) => (
+                            <button 
+                              key={i}
+                              onClick={() => handleBenefitSolve(i === activeBenefit.correctAnswer)}
+                              className="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-indigo-300 hover:bg-white text-left transition-all flex items-center gap-3 group"
+                            >
+                              <span className="w-8 h-8 rounded border border-slate-200 flex items-center justify-center font-mono text-slate-400 group-hover:text-indigo-600 transition-colors">{String.fromCharCode(65+i)}</span>
+                              <span className="text-slate-700 font-medium">{opt}</span>
+                            </button>
+                          ))}
+                        </div>
                       </motion.div>
                     </motion.div>
                   )}
@@ -1028,18 +1021,18 @@ export default function App() {
                           </div>
                           <div className="space-y-6 relative pt-4 border-t border-slate-800">
                             <h4 className="text-xl text-indigo-100 font-medium">{activeJoker.question}</h4>
-                            <div className="grid grid-cols-1 gap-3">
-                              {activeJoker.options.map((opt, i) => (
-                                <button 
-                                  key={i}
-                                  onClick={() => handleJokerSolve(i === activeJoker.correctAnswer)}
-                                  className="p-5 bg-slate-800 border border-slate-700 rounded-xl hover:border-indigo-500 hover:bg-slate-700 transition-all text-left text-slate-300 font-medium flex items-center gap-4 group"
-                                >
-                                  <span className="w-8 h-8 rounded border border-slate-600 flex items-center justify-center font-mono text-slate-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">{String.fromCharCode(65+i)}</span>
-                                  {opt}
-                                </button>
-                              ))}
-                            </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          {activeJoker.options.map((opt, i) => (
+                            <button 
+                              key={i}
+                              onClick={() => handleJokerSolve(i === activeJoker.correctAnswer)}
+                              className="p-5 bg-slate-800 border border-slate-700 rounded-xl hover:border-slate-500 hover:bg-slate-700 transition-all text-left text-slate-300 font-medium flex items-center gap-4 group"
+                            >
+                              <span className="w-8 h-8 rounded border border-slate-600 flex items-center justify-center font-mono text-slate-500 group-hover:text-slate-200 transition-colors">{String.fromCharCode(65+i)}</span>
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
                           </div>
                         </div>
                       </motion.div>

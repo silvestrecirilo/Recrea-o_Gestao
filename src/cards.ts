@@ -2,6 +2,8 @@ export interface CrisisCard {
   id: string;
   title: string;
   description: string;
+  options: string[];
+  correctAnswer: number;
   onSuccess: number;
   onFailure: number;
 }
@@ -10,6 +12,8 @@ export interface BenefitCard {
   id: string;
   title: string;
   description: string;
+  options: string[];
+  correctAnswer: number;
   effect: 'direto' | 'proxima' | 'escudo' | 'multiplicador';
   value: number;
 }
@@ -25,41 +29,41 @@ export interface JokerQuestion {
 }
 
 export const CRISES: CrisisCard[] = [
-  { id: 'c1', title: 'Sistema de som falhou!', description: 'Abertura com 500 pessoas. Equipamento parou, fornecedor nao atende.', onSuccess: 150, onFailure: -80 },
-  { id: 'c2', title: 'Fornecedor sumiu!', description: 'Alimentacao de 400 participantes em risco. Faltam 2h para o intervalo.', onSuccess: 150, onFailure: -70 },
-  { id: 'c3', title: 'Tempestade tropical!', description: 'Chuva intensa cancela atividades ao ar livre. Faltam 4h de evento.', onSuccess: 150, onFailure: -80 },
-  { id: 'c4', title: 'Acidente com participante!', description: 'Participante se machucou durante atividade. Atendimento imediato.', onSuccess: 200, onFailure: -100 },
-  { id: 'c5', title: 'Patrocinador cancelou!', description: '30% do orcamento evaporou na vespera. Decisao financeira urgente.', onSuccess: 150, onFailure: -80 },
-  { id: 'c6', title: 'Equipe adoeceu!', description: 'Metade da equipe ausente no dia do evento. Operacao em risco.', onSuccess: 150, onFailure: -70 },
-  { id: 'c7', title: 'Local bloqueado!', description: 'Administracao negou acesso 24h antes. Busca emergencial necessaria.', onSuccess: 150, onFailure: -80 },
-  { id: 'c8', title: 'Orcamento cortado 40%!', description: 'Cliente comunicou corte brutal na semana do evento ja anunciado.', onSuccess: 150, onFailure: -70 },
-  { id: 'c9', title: 'Falha de comunicacao!', description: 'Equipes com versoes antigas do rundown. Operacao dessincronizada.', onSuccess: 150, onFailure: -60 },
-  { id: 'c10', title: 'Superlotacao critica!', description: '1.200 pessoas em espaco para 500. Risco de seguranca iminente.', onSuccess: 200, onFailure: -100 },
-  { id: 'c11', title: 'Material incompleto!', description: '60% dos itens nao chegaram. Atividades comecam em 1 hora.', onSuccess: 150, onFailure: -70 },
-  { id: 'c12', title: 'Palestrante cancelou!', description: 'Atracao principal desistiu 1h antes. Publico ja esta presente.', onSuccess: 150, onFailure: -70 },
-  { id: 'c13', title: 'Sistema travou!', description: 'Plataforma de inscricao offline. 200 participantes sem confirmacao.', onSuccess: 150, onFailure: -60 },
-  { id: 'c14', title: 'Conflito na equipe!', description: 'Dois coordenadores em conflito sério paralisaram suas funcoes.', onSuccess: 150, onFailure: -80 },
-  { id: 'c15', title: 'Calor extremo!', description: '43 graus registrados. Participantes com sinais de cansaco extremo.', onSuccess: 200, onFailure: -100 },
-  { id: 'c16', title: 'Live caiu!', description: 'Transmissao travou com 1.500 espectadores. Evento hibrido comprometido.', onSuccess: 150, onFailure: -70 }
+  { id: 'c1', title: 'Sistema de som falhou!', description: 'Abertura com 500 pessoas. Equipamento parou, fornecedor nao atende.', options: ['Acionar plano de contingência e usar megafone', 'Aguardar fornecedor', 'Cancelar abertura'], correctAnswer: 0, onSuccess: 150, onFailure: -80 },
+  { id: 'c2', title: 'Fornecedor sumiu!', description: 'Alimentacao de 400 participantes em risco. Faltam 2h para o intervalo.', options: ['Buscar fornecedor local reserva', 'Reduzir porcoes', 'Informar atraso e aguardar'], correctAnswer: 0, onSuccess: 150, onFailure: -70 },
+  { id: 'c3', title: 'Tempestade tropical!', description: 'Chuva intensa cancela atividades ao ar livre. Faltam 4h de evento.', options: ['Mover para area coberta e adaptar cronograma', 'Manter na chuva', 'Encerrar evento'], correctAnswer: 0, onSuccess: 150, onFailure: -80 },
+  { id: 'c4', title: 'Acidente com participante!', description: 'Participante se machucou durante atividade. Atendimento imediato.', options: ['Acionar equipe medica e isolar area', 'Socorrer sem ajuda profissional', 'Ignorar e seguir cronograma'], correctAnswer: 0, onSuccess: 200, onFailure: -100 },
+  { id: 'c5', title: 'Patrocinador cancelou!', description: '30% do orcamento evaporou na vespera. Decisao financeira urgente.', options: ['Cortar gastos nao essenciais e buscar novos parceiros', 'Manter gastos e assumir divida', 'Cancelar todas as atracoes pagas'], correctAnswer: 0, onSuccess: 150, onFailure: -80 },
+  { id: 'c6', title: 'Equipe adoeceu!', description: 'Metade da equipe ausente no dia do evento. Operacao em risco.', options: ['Realocar coordenadores e simplificar processos', 'Sobregarregar os que ficaram sem mudanca', 'Cancelar postos de atendimento'], correctAnswer: 0, onSuccess: 150, onFailure: -70 },
+  { id: 'c7', title: 'Local bloqueado!', description: 'Administracao negou acesso 24h antes. Busca emergencial necessaria.', options: ['Alugar espaco proximo e avisar via push/zap', 'Entrar judicialmente sem entrar no local', 'Desistir do evento'], correctAnswer: 0, onSuccess: 150, onFailure: -80 },
+  { id: 'c8', title: 'Orcamento cortado 40%!', description: 'Cliente comunicou corte brutal na semana do evento ja anunciado.', options: ['Rever escopo e ajustar entregas com transparencia', 'Manter promessas sem verba', 'Culpar equipe pelo corte'], correctAnswer: 0, onSuccess: 150, onFailure: -70 },
+  { id: 'c9', title: 'Falha de comunicacao!', description: 'Equipes com versoes antigas do rundown. Operacao dessincronizada.', options: ['Reuniao rapida e distribuicao de rundown corrigido via Zap', 'Tentar sincronizar por gritos', 'Aguardar proxima pausa'], correctAnswer: 0, onSuccess: 150, onFailure: -60 },
+  { id: 'c10', title: 'Superlotacao critica!', description: '1.200 pessoas em espaco para 500. Risco de seguranca iminente.', options: ['Interromper novas entradas e criar fluxo de saida', 'Deixar entrar e torcer', 'Expulsar todos imediatamente'], correctAnswer: 0, onSuccess: 200, onFailure: -100 },
+  { id: 'c11', title: 'Material incompleto!', description: '60% dos itens nao chegaram. Atividades comecam em 1 hora.', options: ['Adaptar atividades com material disponivel e criatividade', 'Atrasar inicio ate chegar', 'Pedir desculpas e nao fazer nada'], correctAnswer: 0, onSuccess: 150, onFailure: -70 },
+  { id: 'c12', title: 'Palestrante cancelou!', description: 'Atracao principal desistiu 1h antes. Publico ja esta presente.', options: ['Inserir rodada de networking ou palestrante reserva', 'Pedir que o publico converse entre si', 'Dispensar o publico'], correctAnswer: 0, onSuccess: 150, onFailure: -70 },
+  { id: 'c13', title: 'Sistema travou!', description: 'Plataforma de inscricao offline. 200 participantes sem confirmacao.', options: ['Fazer check-in manual e validar pos-evento', 'Impedir entrada de todos', 'Aguardar sistema voltar'], correctAnswer: 0, onSuccess: 150, onFailure: -60 },
+  { id: 'c14', title: 'Conflito na equipe!', description: 'Dois coordenadores em conflito sério paralisaram suas funcoes.', options: ['Mediar conflito e manter foco no cliente', 'Ignorar conflito', 'Demitir ambos no meio do evento'], correctAnswer: 0, onSuccess: 150, onFailure: -80 },
+  { id: 'c15', title: 'Calor extremo!', description: '43 graus registrados. Participantes com sinais de cansaco extremo.', options: ['Distribuir agua e criar pontos de sombra/descanso', 'Seguir cronograma sob o sol', 'Oferecer bebida alcoolica'], correctAnswer: 0, onSuccess: 200, onFailure: -100 },
+  { id: 'c16', title: 'Live caiu!', description: 'Transmissao travou com 1.500 espectadores. Evento hibrido comprometido.', options: ['Reiniciar encoder e manter chat informado', 'Desligar e postar gravacao depois', 'Culpar a operadora de internet'], correctAnswer: 0, onSuccess: 150, onFailure: -70 }
 ];
 
 export const BENEFITS: BenefitCard[] = [
-  { id: 'b1', title: 'Patrocinador surpresa!', description: 'Empresa aderiu como co-patrocinadora de ultima hora!', effect: 'direto', value: 200 },
-  { id: 'b2', title: 'Equipe supermotivada!', description: 'Sua equipe entrou no modo turbo! Proxima questao vale DOBRO.', effect: 'proxima', value: 2 },
-  { id: 'b3', title: 'Local premiado!', description: 'O espaco do evento foi eleito o melhor da cidade!', effect: 'direto', value: 150 },
-  { id: 'b4', title: 'Midia espontanea!', description: 'Jornal de grande circulacao cobriu o evento gratuitamente!', effect: 'direto', value: 100 },
-  { id: 'b5', title: 'Entrega antecipada!', description: 'Fornecedor entregou tudo antes do prazo. Proxima crise cancelada!', effect: 'escudo', value: 1 },
-  { id: 'b6', title: 'Participacao recorde!', description: 'Publico superou em 200% a expectativa de participacao!', effect: 'direto', value: 200 },
-  { id: 'b7', title: 'Feedback excelente!', description: 'Avaliacoes incriveis chegando de todos os participantes.', effect: 'direto', value: 150 },
-  { id: 'b8', title: 'Sobrou verba!', description: 'Gestao financeira impecavel! Orcamento superavitario.', effect: 'direto', value: 100 },
-  { id: 'b9', title: 'Seguro cobre tudo!', description: 'Apolice protege o evento. Proximas 2 respostas sem penalidade!', effect: 'escudo', value: 2 },
-  { id: 'b10', title: 'Checklist perfeito!', description: 'Zero itens esquecidos. Executado com absoluta maestria!', effect: 'direto', value: 150 },
-  { id: 'b11', title: 'Rundown impecavel!', description: 'Roteiro do evento executado no tempo certo, a risca!', effect: 'direto', value: 100 },
-  { id: 'b12', title: 'Relatorio premiado!', description: 'Seu relatorio pos-evento foi o melhor da empresa neste ciclo!', effect: 'direto', value: 200 },
-  { id: 'b13', title: 'Cliente encantado!', description: 'Fidelizou o cliente! XP total multiplicado por 1,15.', effect: 'multiplicador', value: 1.15 },
-  { id: 'b14', title: 'Clima perfeito!', description: 'Sol brilhando exatamente como previsto no planejamento.', effect: 'direto', value: 100 },
-  { id: 'b15', title: 'Parceria estrategica!', description: 'Empresa referencia firmou parceria com sua organizacao!', effect: 'direto', value: 150 },
-  { id: 'b16', title: '5 estrelas no Google!', description: 'Avaliacao maxima! Reputacao profissional nas alturas.', effect: 'direto', value: 200 }
+  { id: 'b1', title: 'Patrocinador surpresa!', description: 'Empresa aderiu como co-patrocinadora de ultima hora!', options: ['Aceitar e incluir logo no telao', 'Recusar para nao mudar artes', 'Ignorar o contato'], correctAnswer: 0, effect: 'direto', value: 200 },
+  { id: 'b2', title: 'Equipe supermotivada!', description: 'Sua equipe entrou no modo turbo! Proxima questao vale DOBRO.', options: ['Manter energia com feedback positivo', 'Pedir para desacelerarem', 'Dobrar carga horaria'], correctAnswer: 0, effect: 'proxima', value: 2 },
+  { id: 'b3', title: 'Local premiado!', description: 'O espaco do evento foi eleito o melhor da cidade!', options: ['Divulgar o premio para atrair mais publico', 'Esconder para nao parecer arrogante', 'Mudar de local'], correctAnswer: 0, effect: 'direto', value: 150 },
+  { id: 'b4', title: 'Midia espontanea!', description: 'Jornal de grande circulacao cobriu o evento gratuitamente!', options: ['Atender bem o jornalista e liberar fotos', 'Cobrar pela entrevista', 'Pedir para nao publicarem'], correctAnswer: 0, effect: 'direto', value: 100 },
+  { id: 'b5', title: 'Entrega antecipada!', description: 'Fornecedor entregou tudo antes do prazo. Proxima crise cancelada!', options: ['Armazenar com cuidado e agradecer', 'Reclamar da pressa', 'Deixar na rua'], correctAnswer: 0, effect: 'escudo', value: 1 },
+  { id: 'b6', title: 'Participacao recorde!', description: 'Publico superou em 200% a expectativa de participacao!', options: ['Ampliar catering e equipe de apoio', 'Fechar as portas', 'Manter estrutura original'], correctAnswer: 0, effect: 'direto', value: 200 },
+  { id: 'b7', title: 'Feedback excelente!', description: 'Avaliacoes incriveis chegando de todos os participantes.', options: ['Usar depoimentos em tempo real', 'Guardar para ano que vem', 'Ignorar elogios'], correctAnswer: 0, effect: 'direto', value: 150 },
+  { id: 'b8', title: 'Sobrou verba!', description: 'Gestao financeira impecavel! Orcamento superavitario.', options: ['Investir em brinde extra ou pos-evento', 'Repassar para lucro imediato', 'Gastar com itens de luxo pessoais'], correctAnswer: 0, effect: 'direto', value: 100 },
+  { id: 'b9', title: 'Seguro cobre tudo!', description: 'Apolice protege o evento. Proximas 2 respostas sem penalidade!', options: ['Manter rigor mas com tranquilidade contabil', 'Correr riscos desnecessarios', 'Economizar no seguro'], correctAnswer: 0, effect: 'escudo', value: 2 },
+  { id: 'b10', title: 'Checklist perfeito!', description: 'Zero itens esquecidos. Executado com absoluta maestria!', options: ['Revisar e seguir fluxo suave', 'Criar novos problemas', 'Relaxar e dormir'], correctAnswer: 0, effect: 'direto', value: 150 },
+  { id: 'b11', title: 'Rundown impecavel!', description: 'Roteiro do evento executado no tempo certo, a risca!', options: ['Manter foco na proxima fase', 'Acelerar demais', 'Parar operacao'], correctAnswer: 0, effect: 'direto', value: 100 },
+  { id: 'b12', title: 'Relatorio premiado!', description: 'Seu relatorio pos-evento foi o melhor da empresa neste ciclo!', options: ['Compartilhar aprendizado com equipe', 'Guardar so para si', 'Nao fazer o relatorio'], correctAnswer: 0, effect: 'direto', value: 200 },
+  { id: 'b13', title: 'Cliente encantado!', description: 'Fidelizou o cliente! XP total multiplicado por 1,15.', options: ['Manter relacionamento e pos-venda', 'Nao responder mais o cliente', 'Cobrar mais caro imediatamente'], correctAnswer: 0, effect: 'multiplicador', value: 1.15 },
+  { id: 'b14', title: 'Clima perfeito!', description: 'Sol brilhando exatamente como previsto no planejamento.', options: ['Aproveitar areas externas plenamente', 'Mudar tudo para dentro', 'Reclamar do sol'], correctAnswer: 0, effect: 'direto', value: 100 },
+  { id: 'b15', title: 'Parceria estrategica!', description: 'Empresa referencia firmou parceria com sua organizacao!', options: ['Planejar acoes conjuntas de longo prazo', 'Usar apenas uma vez', 'Recusar parceria'], correctAnswer: 0, effect: 'direto', value: 150 },
+  { id: 'b16', title: '5 estrelas no Google!', description: 'Avaliacao maxima! Reputacao profissional nas alturas.', options: ['Responder agradecendo e printar para midia', 'Remover avaliacao', 'Duvidar da veracidade'], correctAnswer: 0, effect: 'direto', value: 200 }
 ];
 
 export const JOKERS: JokerQuestion[] = [
