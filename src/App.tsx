@@ -18,7 +18,8 @@ import {
   Minimize2,
   AlertTriangle,
   Sparkles,
-  Users
+  Users,
+  Trash2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { db } from './lib/firebase';
@@ -31,7 +32,10 @@ import {
   setDoc, 
   doc, 
   serverTimestamp,
-  updateDoc
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  writeBatch
 } from 'firebase/firestore';
 import { CRISES, BENEFITS, JOKERS, CrisisCard, BenefitCard, JokerQuestion } from './cards';
 
@@ -392,6 +396,7 @@ export default function App() {
   const [streak, setStreak] = useState(0);
   const [ranking, setRanking] = useState<PlayerRecord[]>([]);
   const [showProjection, setShowProjection] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   // Cards State
   const [activeCrisis, setActiveCrisis] = useState<CrisisCard | null>(null);
@@ -426,6 +431,29 @@ export default function App() {
       }).catch(err => console.error("Error updating score:", err));
     }
   }, [score, playerId, gameState]);
+
+  const clearLeaderboard = async () => {
+    if (!window.confirm("Deseja realmente apagar todo o ranking? Esta ação é irreversível.")) return;
+    
+    setIsClearing(true);
+    try {
+      const q = query(collection(db, "players"));
+      const snapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      
+      await batch.commit();
+      confetti({ particleCount: 100, colors: ['#f43f5e'] });
+    } catch (err) {
+      console.error("Error clearing leaderboard:", err);
+      alert("Erro ao limpar o ranking. Verifique o console.");
+    } finally {
+      setIsClearing(false);
+    }
+  };
 
   const handleStart = async () => {
     if (!playerName.trim()) return;
@@ -496,21 +524,12 @@ export default function App() {
       setScore(prev => Math.round(prev + points));
       setStreak(prev => prev + 1);
 
-      // Trigger Benefit chance (20%)
-      if (Math.random() < 0.2) {
-        setTimeout(() => triggerCard('benefit'), 500);
-      }
-
       // Confetti for long streak
       if (streak > 2) {
         confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
       }
     } else {
       setStreak(0);
-      // Trigger Crisis chance on wrong answer (30%)
-      if (Math.random() < 0.3) {
-        setTimeout(() => triggerCard('crisis'), 500);
-      }
     }
   };
 
@@ -555,6 +574,13 @@ export default function App() {
   };
 
   const nextQuestion = () => {
+    // Every 2 questions, trigger an event
+    const questionNumber = currentQuestionIndex + 1;
+    if (questionNumber % 2 === 0) {
+      const type = Math.random() < 0.5 ? 'crisis' : 'benefit';
+      setTimeout(() => triggerCard(type), 300);
+    }
+
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedOption(null);
@@ -591,12 +617,22 @@ export default function App() {
                 <h1 className="text-4xl font-display font-bold text-slate-900 mb-2 tracking-tight">RANKING EM TEMPO REAL</h1>
                 <p className="text-indigo-600 font-mono tracking-widest uppercase text-sm font-bold">Aula 07: Gestão e Logística de Eventos</p>
               </div>
-              <button 
-                onClick={() => setShowProjection(false)}
-                className="p-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-full transition-all shadow-sm flex items-center justify-center"
-              >
-                <Minimize2 size={32} />
-              </button>
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={clearLeaderboard}
+                  disabled={isClearing}
+                  className="p-4 bg-white border border-rose-100 hover:bg-rose-50 text-rose-500 rounded-full transition-all shadow-sm flex items-center justify-center disabled:opacity-50"
+                  title="Apagar todos os registros"
+                >
+                  <Trash2 size={32} />
+                </button>
+                <button 
+                  onClick={() => setShowProjection(false)}
+                  className="p-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-full transition-all shadow-sm flex items-center justify-center"
+                >
+                  <Minimize2 size={32} />
+                </button>
+              </div>
             </div>
 
             <div className="flex-grow grid grid-cols-1 gap-6 max-w-5xl mx-auto w-full content-start">
@@ -740,7 +776,17 @@ export default function App() {
               <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-full -mr-10 -mt-10 opacity-50" />
               <h2 className="label-caps !text-slate-400 border-b border-slate-100 pb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2"><BarChart3 size={14} /> Ranking Real-Time</div>
-                <Users size={12} className="text-indigo-400" />
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={clearLeaderboard}
+                    disabled={isClearing}
+                    className="p-1 hover:bg-rose-50 text-slate-300 hover:text-rose-500 rounded transition-colors disabled:opacity-50"
+                    title="Apagar Ranking"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                  <Users size={12} className="text-indigo-400" />
+                </div>
               </h2>
               <div className="space-y-3">
                 {ranking.map((user, idx) => (
