@@ -410,6 +410,11 @@ export default function App() {
 
   // Sync with Firestore Leaderboard
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('project') === 'true') {
+      setShowProjection(true);
+    }
+
     const q = query(collection(db, "players"), orderBy("score", "desc"), limit(10));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const records = snapshot.docs.map(doc => ({
@@ -499,11 +504,23 @@ export default function App() {
         setShields(prev => prev - 1);
         return; // Blocked by shield!
       }
-      const randomCrisis = CRISES[Math.floor(Math.random() * CRISES.length)];
-      setActiveCrisis(randomCrisis);
+      const baseCrisis = CRISES[Math.floor(Math.random() * CRISES.length)];
+      const originalCorrect = baseCrisis.options[baseCrisis.correctAnswer];
+      const randomizedOptions = shuffleArray(baseCrisis.options);
+      setActiveCrisis({
+        ...baseCrisis,
+        options: randomizedOptions,
+        correctAnswer: randomizedOptions.indexOf(originalCorrect)
+      });
     } else {
-      const randomBenefit = BENEFITS[Math.floor(Math.random() * BENEFITS.length)];
-      setActiveBenefit(randomBenefit);
+      const baseBenefit = BENEFITS[Math.floor(Math.random() * BENEFITS.length)];
+      const originalCorrect = baseBenefit.options[baseBenefit.correctAnswer];
+      const randomizedOptions = shuffleArray(baseBenefit.options);
+      setActiveBenefit({
+        ...baseBenefit,
+        options: randomizedOptions,
+        correctAnswer: randomizedOptions.indexOf(originalCorrect)
+      });
     }
   }, [shields]);
 
@@ -592,8 +609,14 @@ export default function App() {
 
       // Joker Chance (Streak based)
       if (streak === 5 || streak === 10) {
-        const randomJoker = JOKERS[Math.floor(Math.random() * JOKERS.length)];
-        setActiveJoker(randomJoker);
+        const baseJoker = JOKERS[Math.floor(Math.random() * JOKERS.length)];
+        const originalCorrect = baseJoker.options[baseJoker.correctAnswer];
+        const randomizedOptions = shuffleArray(baseJoker.options);
+        setActiveJoker({
+          ...baseJoker,
+          options: randomizedOptions,
+          correctAnswer: randomizedOptions.indexOf(originalCorrect)
+        });
       }
     } else {
       // Game End
@@ -764,7 +787,10 @@ export default function App() {
             </div>
           )}
           <button 
-            onClick={() => setShowProjection(true)}
+            onClick={() => {
+              const url = window.location.origin + window.location.pathname + '?project=true';
+              window.open(url, '_blank');
+            }}
             className="p-2 md:p-3 bg-slate-900 text-white rounded-xl hover:bg-black transition-colors flex items-center gap-2 font-bold text-[10px] md:text-xs uppercase tracking-widest"
           >
             <Maximize2 size={16} /> <span className="hidden sm:inline">Projetar Ranking</span>
