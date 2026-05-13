@@ -391,6 +391,8 @@ export default function App() {
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [regularCorrectCount, setRegularCorrectCount] = useState(0);
+  const [cardsPoints, setCardsPoints] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [streak, setStreak] = useState(0);
@@ -489,6 +491,8 @@ export default function App() {
       setGameState('quiz');
       setCurrentQuestionIndex(0);
       setScore(0);
+      setRegularCorrectCount(0);
+      setCardsPoints(0);
       setStreak(0);
       setShields(0);
       setDoubleXP(false);
@@ -539,6 +543,7 @@ export default function App() {
         setDoubleXP(false);
       }
       setScore(prev => Math.round(prev + points));
+      setRegularCorrectCount(prev => prev + 1);
       setStreak(prev => prev + 1);
 
       // Confetti for long streak
@@ -554,9 +559,11 @@ export default function App() {
     if (!activeCrisis) return;
     if (solved) {
       setScore(prev => prev + activeCrisis.onSuccess);
+      setCardsPoints(prev => prev + activeCrisis.onSuccess);
       confetti({ particleCount: 30, colors: ['#10b981'] });
     } else {
       setScore(prev => Math.max(0, prev + activeCrisis.onFailure));
+      setCardsPoints(prev => prev + activeCrisis.onFailure);
     }
     setActiveCrisis(null);
   };
@@ -567,6 +574,7 @@ export default function App() {
       switch (activeBenefit.effect) {
         case 'direto':
           setScore(prev => prev + activeBenefit.value);
+          setCardsPoints(prev => prev + activeBenefit.value);
           break;
         case 'proxima':
           setDoubleXP(true);
@@ -588,6 +596,7 @@ export default function App() {
   const handleJokerSolve = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore(prev => prev + 300);
+      setCardsPoints(prev => prev + 300);
       triggerCard('benefit'); // Guaranteed benefit
       confetti({ particleCount: 100, spread: 70 });
     }
@@ -1178,15 +1187,22 @@ export default function App() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-10">
-                    <div className="bg-slate-50 border border-slate-100 p-4 md:p-6 rounded-2xl">
+                    <div className="bg-slate-50 border border-slate-100 p-4 md:p-6 rounded-2xl flex flex-col items-center">
                       <p className="font-mono text-2xl md:text-3xl font-bold text-emerald-600 mb-1">{score}</p>
-                      <p className="label-caps !tracking-[0.15em] !text-[10px]">XP Acumulado</p>
+                      <p className="label-caps !tracking-[0.15em] !text-[10px]">XP Total Final</p>
                     </div>
-                    <div className="bg-slate-50 border border-slate-100 p-4 md:p-6 rounded-2xl">
+                    <div className="bg-slate-50 border border-slate-100 p-4 md:p-6 rounded-2xl flex flex-col items-center">
                       <p className="font-mono text-2xl md:text-3xl font-bold text-slate-900 mb-1">
-                        {Math.round((score / 2500) * 100)}%
+                        {regularCorrectCount}/{shuffledQuestions.length || QUESTIONS.length}
                       </p>
-                      <p className="label-caps !tracking-[0.15em] !text-[10px]">Desempenho Geral</p>
+                      <p className="label-caps !tracking-[0.15em] !text-[10px]">Questões Regulares</p>
+                    </div>
+                    <div className="bg-indigo-50 border border-indigo-100 p-4 md:p-6 rounded-2xl flex flex-col items-center sm:col-span-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Sparkles className="text-indigo-400" size={16} />
+                        <p className="font-mono text-xl md:text-2xl font-bold text-indigo-600">{cardsPoints > 0 ? `+${cardsPoints}` : cardsPoints} XP</p>
+                      </div>
+                      <p className="label-caps !tracking-[0.15em] !text-[10px] !text-indigo-400">Pontuação em Cartas (Crise/Benefício/Coringa)</p>
                     </div>
                   </div>
 
