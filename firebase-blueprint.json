@@ -1,0 +1,21 @@
+{
+  "entities": {
+    "Player": {
+      "title": "Player",
+      "description": "Represents a student playing the event management game.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Display name of the player" },
+        "score": { "type": "number", "description": "Current accumulated XP" },
+        "lastUpdated": { "type": "string", "format": "date-time", "description": "Timestamp of last score update" }
+      },
+      "required": ["name", "score", "lastUpdated"]
+    }
+  },
+  "firestore": {
+    "/players/{playerId}": {
+      "schema": "Player",
+      "description": "Collection of players and their high scores."
+    }
+  }
+}
